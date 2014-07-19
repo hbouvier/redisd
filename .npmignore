@@ -1,0 +1,5 @@
+.git/
+node_modules/
+.travis.yml
+.idea
+redisd.iml
