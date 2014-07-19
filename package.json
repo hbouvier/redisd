@@ -2,7 +2,7 @@
     "author"      : "Henri Bouvier",
     "name"        : "redisd",
     "description" : "A redis REST API",
-    "version"     : "0.0.4",
+    "version"     : "0.0.6",
     "keywords"    : ["redis", "rest", "redisd"],
     "repository"  : {
         "type" : "git",
@@ -18,7 +18,7 @@
     "engines"              : {
         "node" : ">= 0.10.0 < 0.11.0"
     },
-    "main" : "./bin/redisd",
+    "main" : "./lib/redis.js",
     "bin"  : {
         "redisd" : "./bin/redisd"
     },
