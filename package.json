@@ -2,7 +2,7 @@
   "author": "Henri Bouvier",
   "name": "redisd",
   "description": "A redis REST API",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "keywords": [
     "redis",
     "rest",
