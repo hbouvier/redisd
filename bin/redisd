@@ -62,6 +62,7 @@
     //
     config.www        = path.join(rootPath, "/public");
     config.routes     = path.join(rootPath, "lib/routes");
+    config.bodyparser = path.join(rootPath, "lib/bodyparser");
 
     ///////////////////////////////////////////////////////////////////////////
     //

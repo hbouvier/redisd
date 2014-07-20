@@ -1,0 +1,7 @@
+integer,13
+float,3.14
+raw,some text not quoted
+single,'single quoted text'
+double,"double quoted text too"
+object,{"key":"value"}
+vector,[1,2.2,true,false,"string"]

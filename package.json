@@ -15,7 +15,7 @@
   "dependencies": {
     "node-options": "0.0.3",
     "redis": "0.10.3",
-    "tomahawk": "0.0.15",
+    "tomahawk": "0.0.17",
     "winston": "0.7.2"
   },
   "engines": {
