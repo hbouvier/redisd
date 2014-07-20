@@ -1,7 +1,14 @@
 angular.module('redisControllers', ['redisServices', 'redisModels'])
     .controller('redisCtrl', function($scope, $location, socket, KeyStore, KeyStoreStats) {
     	$scope.redis = {
-    		keyStore  : KeyStore.list(),
+    		keyStore  : KeyStore.list(function(data, headers) {
+                $scope.redis.headers = {};
+                $scope.redis.headers.operation  = headers('X-redis-operation');
+                $scope.redis.headers.multikey   = headers('X-redis-multi-key');
+                $scope.redis.headers.key        = headers('X-redis-key');
+                $scope.redis.headers.server     = headers('X-redis-server');
+                $scope.redis.headers.httpmethod = headers('X-redis-http-method');
+            }),
         	stats     : KeyStoreStats.get()
         };
         socket.on('new:key', function (object) {

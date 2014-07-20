@@ -18,10 +18,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in redis.keyStore.objects | objectFilter:searchText" ng-click="select($index)">
-                <td style="white-space:nowrap;">{{row.server}}</td>
-                <td style="white-space:nowrap;">{{row.key}}</td>
-                <td style="white-space:nowrap;">{{row.value}}</td>
+            <tr ng-repeat="(key, value) in redis.keyStore | objectFilter:searchText" ng-click="select($index)">
+                <td style="white-space:nowrap;">{{redis.headers.server}}</td>
+                <td style="white-space:nowrap;">{{key}}</td>
+                <td style="white-space:nowrap;">{{value}}</td>
             </tr>
             </tbody>
         </table>

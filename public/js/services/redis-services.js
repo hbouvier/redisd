@@ -54,7 +54,7 @@ angular.module('redisServices', ['ngResource'])
     })
     .factory('KeyStoreStats', function ($rootScope, $resource) {
         return $resource($rootScope.baseAPIurl + '/status', null, {
-            "get"     : { method : "GET", isArray : false }
+            "get"     : { method : "GET", isArray : true }
         });
     })
 ;

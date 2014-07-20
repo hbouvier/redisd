@@ -1,17 +1,35 @@
 #!/bin/sh
+curl -vsw "\nHTTP-CODE=%{http_code}" -X DELETE 'http://127.0.0.1:8080/redis/api/v1/key?force=true'
+
 cat input.csv | while read line ; do 
 	key=`echo $line | cut -f1 -d,`
 	value=`echo $line | cut -f2-99 -d,`
 	echo "---------- $key === $value --------"
-	curl -X PUT http://127.0.0.1:8080/redis/api/v1/key/$key -d "$value"
+	curl -vsw "\nHTTP-CODE=%{http_code}" -X PUT http://127.0.0.1:8080/redis/api/v1/key/$key -d "$value" 2>&1 | grep -v -E '^(\*|>|< HTTP|< X-Pow|< Content|< ETag|< Date|< Connection|\{)' | grep -v 'data not shown'
 	printf "\n"
-        if [ "$key" == "object" -o "$key" == "vector" ] ; then
-		curl -s http://127.0.0.1:8080/redis/api/v1/key/$key | json value | json
-		printf "\n"
+    if [ "$key" == "vector" ] ; then
+        echo PUT should return HTTP/500
+		curl -vsw "\nHTTP-CODE=%{http_code}" http://127.0.0.1:8080/redis/api/v1/key/$key 2>&1 | grep -v -E '^(\*|>|< HTTP|< X-Pow|< Content|< ETag|< Date|< Connection)' | grep -v 'data not shown' > /tmp/$$.log
+		echo "HEADERS:"
+		cat /tmp/$$.log | grep -E '^(<)'
+		echo "JSON:"
+		cat /tmp/$$.log | grep -v -E '^(<)'
+		rm /tmp/$$.log
+        echo GET should return HTTP/404
+		printf "\nREDIS: "
+                redis-cli get $key
+    elif [ "$key" == "object" ] ; then
+		curl -vsw "\nHTTP-CODE=%{http_code}" http://127.0.0.1:8080/redis/api/v1/key/$key 2>&1 | grep -v -E '^(\*|>|< HTTP|< X-Pow|< Content|< ETag|< Date|< Connection)' | grep -v 'data not shown' > /tmp/$$.log
+		echo "HEADERS:"
+		cat /tmp/$$.log | grep -E '^(<)'
+		echo "JSON:"
+		cat /tmp/$$.log | grep -v -E '^(<)'
+		rm /tmp/$$.log
+		printf "\nREDIS: "
                 redis-cli get $key | json
         else
-		curl -s http://127.0.0.1:8080/redis/api/v1/key/$key | json value 
-		printf "\n"
+		curl -vsw "\nHTTP-CODE=%{http_code}" http://127.0.0.1:8080/redis/api/v1/key/$key 2>&1 | grep -v -E '^(\*|>|< HTTP|< X-Pow|< Content|< ETag|< Date|< Connection|\{)' | grep -v 'data not shown'
+		printf "\nREDIS: "
                 redis-cli get $key
-        fi
+    fi
 done
