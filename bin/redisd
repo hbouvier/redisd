@@ -68,8 +68,17 @@
     //
     // Initialize the connection to REDIS
     //
-    config.redis = require(path.join(rootPath, "lib/redis")).create(config);
-    if (config.redis.connect(function (err, result) {
+    var redis = require(path.join(rootPath, "lib/redis"))
+    config.publisher = redis.create(config);
+    if (config.publisher.connect(function (err, result) {
+        if (err) {
+            logger.log('error', 'Unable to connect ot the majority of REDIS sersers >> URLs [', config.redis_urls, '].');
+            process.exit(-1);
+        }
+        config.redis = redis.create(config);
+        config.redis.setPublisher(config.publisher);
+
+        if (config.redis.connect(function (err, result) {
             ///////////////////////////////////////////////////////////////////////////
             //
             // Start Tomahawk once we are connected to the majority
@@ -81,8 +90,14 @@
             var app   = require('tomahawk').create(config).start();
 
         })
-    ) {
+            ) {
+            logger.log('error', 'Unable to parse REDIS URLs [', config.redis_urls, ']. Expected env REDIS_URLs=server1:port,server2:port');
+            process.exit(-1);
+        }
+    })
+        ) {
         logger.log('error', 'Unable to parse REDIS URLs [', config.redis_urls, ']. Expected env REDIS_URLs=server1:port,server2:port');
         process.exit(-1);
     }
+
 }).call();

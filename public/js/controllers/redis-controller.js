@@ -11,32 +11,29 @@ angular.module('redisControllers', ['redisServices', 'redisModels'])
             }),
         	stats     : KeyStoreStats.get()
         };
-        socket.on('new:key', function (object) {
-        	var found = false;
-        	if ($scope.redis.keyStore.objects) {
-	        	for (var i = 0 ; i < $scope.redis.keyStore.objects.length ; ++i) {
-	        		if ($scope.redis.keyStore.objects[i].key === object.key) {
+        socket.on('redis:set', function (message) {
+        	var found  = false,
+                object = JSON.parse(message);
+        	if ($scope.redis.keyStore) {
+                for (var name in $scope.redis.keyStore) {
+                    if ($scope.redis.keyStore.hasOwnProperty(name) && name === object.key) {
 	        			found = true;
-	        			$scope.redis.keyStore.objects[i].value = object.value;
+	        			$scope.redis.keyStore[object.key] = object.value;
 	        			break;
 	        		}
 	        	}
 	        }
         	if (!found) {
-        		if (!$scope.redis.keyStore.objects)
-        			$scope.redis.keyStore.objects = [];
-        		$scope.redis.keyStore.objects.push(object);
+        		if (!$scope.redis.keyStore)
+        			$scope.redis.keyStore = {};
+        		$scope.redis.keyStore[object.key] = object.value;
         	}
         });
-        socket.on('delete:key', function (object) {
-        	if ($scope.redis.keyStore.objects) {
-	        	for (var i = 0 ; i < $scope.redis.keyStore.objects.length ; ++i) {
-	        		if ($scope.redis.keyStore.objects[i].key === object.key) {
-	        			$scope.redis.keyStore.objects.splice(i, 1);
-	        			break;
-	        		}
-	        	}
-	        }
+        socket.on('redis:del', function (message) {
+            var object = JSON.parse(message);
+            if ($scope.redis.keyStore && $scope.redis.keyStore.hasOwnProperty(object.key)) {
+                delete $scope.redis.keyStore[object.key];
+            }
         });
 
     })
